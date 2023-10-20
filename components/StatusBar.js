@@ -1,16 +1,37 @@
 import  Constants  from 'expo-constants';  
 import { Platform, StatusBar, StyleSheet, Text, View } from 'react-native';  
-//import NetInfo from "@react-native-community/netinfo";
+import NetInfo from "@react-native-community/netinfo";
+import {useNetInfo} from "@react-native-community/netinfo";
+
 import React from 'react';  
 
 
 export default class Status extends React.Component{  
-    state = {  info: null,
+    state = {  
+        isConnected: true,
     };
+
+    componentDidMount() {
+        NetInfo.fetch().then((state) => {
+          this.setState({ isConnected: state.isConnected,
+                          type: state.type});
+        });
+        // Subscribe to network status changes
+        this.unsubscribe = NetInfo.addEventListener((state) => {
+          this.setState({ isConnected: state.isConnected,
+                          type: state.type });
+        });
+    }
+    componentWillUnmount() {
+        // Unsubscribe from network status changes to prevent memory leaks
+        if (this.unsubscribe) {
+          this.unsubscribe();
+        }
+    }
     render() {  
-        const {info} = this.state;
-        const isConnected = info !== 'none';
-        const backgroundColor = !isConnected ? 'white' : 'chocolate';
+        //const {info} = this.state;
+        const { isConnected, type } = this.state;      
+        const backgroundColor = !isConnected ? 'green' : 'red';
         const statusBar = ( 
             <StatusBar 
                 backgroundColor={backgroundColor} 
@@ -21,9 +42,18 @@ export default class Status extends React.Component{
         const messageContainer = (
             <View style={styles.messageContainer}>
             {statusBar}
-            {isConnected && (
-                <View style={styles.bubble}>
-                    <Text style={styles.text}>No network connection</Text>
+            <View style={styles.myName}>
+                <Text style={styles.text}> Abelardo </Text>
+            </View>
+            {!isConnected && type ? (
+                <View style={styles.networkUpBubble}>
+                    <Text style={styles.text}>Type: {type} </Text>
+                    <Text style={styles.text}>There is a {type} network connection</Text>
+                </View>
+                ) : (
+                <View style={styles.networkDownbubble}>
+                    <Text style={styles.text}>Type: no {type} </Text>
+                    <Text style={styles.text}>No {type} network connection</Text>
                 </View>
                 )}
             </View>
@@ -54,13 +84,27 @@ const styles = StyleSheet.create({
         height: 80,
         alignItems: 'center',
     },
-    bubble: {
+    networkDownbubble: {
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 20,
         backgroundColor: 'red',
     },
+    networkUpBubble: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 20,
+        backgroundColor: 'green'
+    },
     text: {
         color: 'white',
+        textAlign: 'center'
+    },
+    myName: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 20,
+        backgroundColor: 'green',
+        marginBottom: 20
     },
 }) 
