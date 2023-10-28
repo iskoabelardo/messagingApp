@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Animated} from 'react-native';
 import Status from './components/StatusBar';
 
 export default function App() {
@@ -14,7 +14,6 @@ export default function App() {
         <Text>SADBOYS</Text>
       </View>
     </View>
-    
   );
 }
 
@@ -31,23 +30,17 @@ const styles = StyleSheet.create({
   },
   inputMethod: {
     flex: 1, 
-    backgroundColor: 'orange',
+    backgroundColor: '#F9A4EC',
     padding: 15,
+    borderRadius: 10,
+    alignItems: 'center'
   },
   toolbarSpace: {
     borderTopWidth: 1, 
     borderTopColor: 'rgba(0,0,0,0.04)',
-    backgroundColor: 'pink',
-    padding: 15
-  },
-  // messageText: {
-  //   marginTop: 50,
-  //   padding: 10,
-  //   alignSelf: 'center',
-  //   //justifyContent: 'center',
-  //   textAlign: 'center',
-  //   backgroundColor: 'red',
-  //   color: 'white',
-  //   borderRadius: 20,
-  // }
+    backgroundColor: '#72D4F3',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center'
+  }
 });
