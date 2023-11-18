@@ -1,20 +1,50 @@
-import { StyleSheet, Text, View, Animated} from 'react-native';
-import Status from './components/StatusBar';
+import React from 'react';
+import { StyleSheet, View, Text } from 'react-native';
+import MessageList from './components/MessageList';
+import { createTextMessage, createImageMessage, createLocationMessage } from './utils/MessageUtils';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Status/>
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      messages: [
+        createImageMessage(require('./assets/iu_bonnet.jpg')),
+        createTextMessage('World'),
+        createTextMessage('Hello'),
+        createLocationMessage({
+          latitude: 14.6488,
+          longitude: 121.0509,
+        }),
+      ],
+    };
+  }
+
+  handlePressMessage = () => {
+    // Implement what should happen when a message is pressed
+  };
+
+  renderMessageList() {
+    const { messages } = this.state;
+    return (
       <View style={styles.messageContent}>
-      </View> 
-      <View style={styles.toolbarSpace}>
-        <Text>Isko Abelardo</Text>
+        <MessageList messages={messages} 
+        onPressMessage={this.handlePressMessage} />
       </View>
-      <View style={styles.inputMethod}>
-        <Text>SADBOYS</Text>
+    );
+  }
+  render() {
+    return (
+      <View style={styles.container}>
+        {this.renderMessageList()}
+        <View style={styles.toolbarSpace}>
+          <Text> Isko Abelardo </Text>
+        </View>
+        <View style={styles.inputMethod}>
+          <Text> SADBOYS WORLDWIDE </Text>
+        </View>
       </View>
-    </View>
-  );
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -32,7 +62,7 @@ const styles = StyleSheet.create({
     flex: 1, 
     backgroundColor: '#F9A4EC',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 5,
     alignItems: 'center'
   },
   toolbarSpace: {
@@ -40,7 +70,7 @@ const styles = StyleSheet.create({
     borderTopColor: 'rgba(0,0,0,0.04)',
     backgroundColor: '#72D4F3',
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 5,
     alignItems: 'center'
   }
 });

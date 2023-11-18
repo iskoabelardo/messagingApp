@@ -35,7 +35,7 @@ export default class Status extends React.Component{
                 // If not connected, start a fade-out animation
                 Animated.timing(this.state.fadeAnim, {
                   toValue: 0,
-                  duration: 2500,
+                  duration: 10000,
                   useNativeDriver: true
                 }).start();
               }
@@ -45,14 +45,18 @@ export default class Status extends React.Component{
       });
     }
     componentWillUnmount() {
-        // Unsubscribe from network status changes to prevent memory leaks
+        // Unsubscribe from network status changes
         if (this.unsubscribe) {
           this.unsubscribe();
         }
     }
     render() {  
         //const {info} = this.state;
-        const { isConnected, type, fadeAnim } = this.state;      
+        const { isConnected, type, fadeAnim } = this.state;
+        /*Change the status bar color from green to red
+        Green if it is connected to wifi
+        Red if it is not connected to wifi  
+        */
         const backgroundColor = isConnected ? 'green' : 'red';
         const statusBar = ( 
             <StatusBar 
@@ -61,11 +65,12 @@ export default class Status extends React.Component{
                 animated={true} 
                 /> 
             );
+        // Displays some text and the message bubble
         const messageContainer = (
             <View style={styles.messageContainer}>
             {statusBar}
                 <View style={styles.myName}>
-                    <Text style={styles.text}> Abelardo </Text>
+                    <Text style={styles.text}> Abelardo from 1900 </Text>
                 </View>
                 {isConnected && type ? (
                     <Animated.View style={{ 
