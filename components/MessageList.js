@@ -6,7 +6,8 @@ const keyExtractor = item => item.id.toString();
 
 export default class MessageList extends React.Component {
 
-    renderMessageItem = ({ item }) => { const { onPressMessage } = this.props;
+    renderMessageItem = ({ item }) => { 
+        const { onPressMessage } = this.props;
         return (
             <View key={item.id} style={styles.messageRow}>
             <TouchableOpacity onPress={() => onPressMessage (item)}> 
@@ -18,66 +19,36 @@ export default class MessageList extends React.Component {
 
     renderMessageBody = ({ type, text, uri, coordinate}) => {
     switch (type) {
-        case 'text': return (
-        <View style={styles.messageBubble}>
-            <Text style={styles.text}>{text}</Text>
-        </View>
-        );
-
+        case 'text':
+            return (
+                <View style={styles.messageBubble}>
+                    <Text style = {styles.text}> {text} </Text>
+                </View>
+            );
         case 'image': 
         return (
-            <Image style={styles.image} source= {{ uri }}/>
-        );
-        case 'location': return (
-        <MapView
-                style={styles.map} 
-                initial Region={{
-                ...coordinate,
-                latitudeDelta: 0.08,
-                longitudeDelta: 0.04,
-                }}
-                >
-            <MapView.Marker coordinate={coordinate} />
-        </MapView>
-        );
-        
+            <Image
+            source={{ uri: 'https://blenderartists.org/uploads/default/original/4X/e/a/c/eaca6d1a54172c543bd0ad4d9bcebef9846520fe.jpeg' }}
+            style={styles.image}
+            />
+
+        )
+        case 'location':
+            return (
+                <MapView
+                    style={styles.map}
+                    initialRegion={{
+                        latitude: coordinate.latitude,
+                        longitude: coordinate.longitude,
+                        latitudeDelta: 0.0922, // example delta values
+                        longitudeDelta: 0.0421, // example delta values
+                    }}
+                />
+            );
         default:
             return null;
         };
     };
-    
-    renderMessageItem = ({ item }) => {
-        
-        switch (item.type) {
-            case 'text':
-                return (
-                    <View style={styles.messageBubble}>
-                        <Text style = {styles.text}>{item.text}</Text>
-                    </View>
-                );
-            case 'image':
-            return (
-                <Image
-                    source={item.image}
-                    style={styles.image}
-                />
-            );
-            case 'location':
-                return (
-                    <MapView
-                        style={styles.map}
-                        initialRegion={{
-                            latitude: item.coordinate.latitude,
-                            longitude: item.coordinate.longitude,
-                            latitudeDelta: 0.0922, // example delta values
-                            longitudeDelta: 0.0421, // example delta values
-                        }}
-                    />
-                );
-            default:
-                return null;
-        }
-    }
 
     render() {
         const { messages } = this.props;
@@ -102,8 +73,8 @@ const styles = StyleSheet.create({
     messageRow: {
         flexDirection: 'row',
         justifyContent: 'flex-end', // Aligns messages to the right
-        marginLeft: 60, // Leaves space on the left
-        marginRight: 10,
+        //marginLeft: 60, // Leaves space on the left
+        marginRight: 5,
     },
     messageBubble: {
         backgroundColor: '#007AFF', // Blue color for text message bubbles
@@ -122,7 +93,7 @@ const styles = StyleSheet.create({
     image: {
         width: 200, 
         height: 150,
-        resizeMode: 'cover',
+        resizeMode: 'contain',
         borderRadius: 10,
         margin: 10,
         alignSelf: 'flex-end'

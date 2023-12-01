@@ -1,46 +1,134 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, BackHandler, Image, TouchableHighlight } from 'react-native';
 import MessageList from './components/MessageList';
 import { createTextMessage, createImageMessage, createLocationMessage } from './utils/MessageUtils';
+import Toolbar from "./components/ToolBar";
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       messages: [
-        createImageMessage(require('./assets/iu_bonnet.jpg')),
+        createImageMessage('https://blenderartists.org/uploads/default/original/4X/e/a/c/eaca6d1a54172c543bd0ad4d9bcebef9846520fe.jpeg'),
         createTextMessage('World'),
-        createTextMessage('Hello'),
+        createTextMessage('Hello!'),
         createLocationMessage({
           latitude: 14.6488,
           longitude: 121.0509,
         }),
       ],
+      fullscreenImageId: null,
+      isInputFocused: false,
     };
+    this.subscription = null;
   }
 
-  handlePressMessage = () => {
-    // Implement what should happen when a message is pressed
+  dismissFullScreenImage = () => {
+    this.setState({ fullscreenImageId: null});
   };
+
+  handlePressMessage = ({ id, type }) => {
+    switch (type) {
+      case 'text':
+        // Handle text messages if needed
+        break;
+      case 'image':
+        // Set the fullscreenImageId when an image is pressed
+        console.log('Image pressed, ID:', id);
+        this.setState({ fullscreenImageId: id });
+        break;
+      default:
+        break;
+    }
+  };
+
+  renderFullscreenImage = () => {
+    const { messages, fullscreenImageId } = this.state;
+    if (!fullscreenImageId) return null;
+    const image = messages.find((message) => message.id === fullscreenImageId);
+    if (!image || image.type !== 'image') return null;
+  
+    const { uri } = image;
+  
+    return (
+      <View style={styles.fullscreenOverlay}>
+        <TouchableHighlight
+          style={styles.fullscreenOverlay}
+          onPress={this.dismissFullScreenImage}
+        >
+          <Image style={styles.fullscreenImage} source={{ uri }} />
+        </TouchableHighlight>
+      </View>
+    );
+  };
+  
+  UNSAFE_componentWillUpdate() {
+    this.subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      const { fullscreenImageId } = this.state;
+      if (fullscreenImageId) {
+        this.dismissFullScreenImage();
+        return true;
+      }
+      return false;
+    });
+  }
+  componentWillUnmount() {
+    // Check if this.subscription exists before trying to remove it
+    if (this.subscription) {
+      this.subscription.remove();
+    }
+  }
 
   renderMessageList() {
     const { messages } = this.state;
     return (
       <View style={styles.messageContent}>
         <MessageList messages={messages} 
-        onPressMessage={this.handlePressMessage} />
+          onPressMessage={this.handlePressMessage} />
       </View>
     );
   }
+
+  handlePressToolbarCamera = () => {
+    // ...
+  };
+
+  handlePressToolbarLocation = () => {
+    // ...
+  };
+
+  handleChangeFocus = (isFocused) => {
+    this.setState({ isInputFocused: isFocused });
+  };
+
+  handleSubmit = (text) => {
+    const { messages } = this.state;
+    this.setState({
+      messages: [createTextMessage(text), ...messages],
+    });
+  };
+
+  renderToolbar() {
+      const { isInputFocused } = this.state;
+    return (
+        <Toolbar
+        isFocused={isInputFocused}
+        onSubmit={this.handleSubmit}
+        onChangeFocus={this.handleChangeFocus}
+        onPressCamera={this.handlePressToolbarCamera}
+        onPressLocation={this.handlePressToolbarLocation}
+        />
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        {this.renderMessageList()}
-        <View style={styles.toolbarSpace}>
-          <Text> Isko Abelardo </Text>
-        </View>
+          {this.renderMessageList()}
+          {this.renderToolbar()}
+          {this.renderFullscreenImage()}
         <View style={styles.inputMethod}>
-          <Text> SADBOYS WORLDWIDE </Text>
+          <Text> Isko Abelardo </Text>
         </View>
       </View>
     );
@@ -59,11 +147,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   inputMethod: {
+    borderTopWidth: 1, 
+    borderTopColor: 'rgba(0,0,0,0.04)',
     flex: 1, 
     backgroundColor: '#F9A4EC',
     padding: 15,
     borderRadius: 5,
-    alignItems: 'center'
+    alignItems: 'flex-start'
   },
   toolbarSpace: {
     borderTopWidth: 1, 
@@ -71,6 +161,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#72D4F3',
     padding: 15,
     borderRadius: 5,
-    alignItems: 'center'
-  }
+    alignItems: 'flex-start'
+  },
+  fullscreenOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.9)', // Dark background for overlay
+    justifyContent: 'center', // Center the image
+    alignItems: 'center', // Center the image
+    zIndex: 100, // Make sure it covers everything else
+  },
+  fullscreenImage: {
+    width: '100%', // Full width
+    height: '100%', // Full height
+    resizeMode: 'contain'
+  },
 });
