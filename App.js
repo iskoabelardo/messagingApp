@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, BackHandler, Image, TouchableHighlight } from 'react-native';
+import { StyleSheet, View, Text, BackHandler, Image, TouchableHighlight, Keyboard } from 'react-native';
 import MessageList from './components/MessageList';
 import { createTextMessage, createImageMessage, createLocationMessage } from './utils/MessageUtils';
 import Toolbar from "./components/ToolBar";
@@ -30,17 +30,31 @@ export default class App extends React.Component {
   handlePressMessage = ({ id, type }) => {
     switch (type) {
       case 'text':
-        // Handle text messages if needed
         break;
       case 'image':
-        // Set the fullscreenImageId when an image is pressed
-        console.log('Image pressed, ID:', id);
+        if (this.state.isInputFocused) {
+          Keyboard.dismiss();
+          this.setState({ isInputFocused: false });
+        }
         this.setState({ fullscreenImageId: id });
         break;
       default:
         break;
     }
   };
+
+  renderToolbar() {
+    const { isInputFocused } = this.state;
+    return (
+        <Toolbar
+        isFocused={isInputFocused}
+        onSubmit={this.handleSubmit}
+        onChangeFocus={this.handleChangeFocus}
+        onPressCamera={this.handlePressToolbarCamera}
+        onPressLocation={this.handlePressToolbarLocation}
+        />
+    );
+  }
 
   renderFullscreenImage = () => {
     const { messages, fullscreenImageId } = this.state;
@@ -107,19 +121,6 @@ export default class App extends React.Component {
       messages: [createTextMessage(text), ...messages],
     });
   };
-
-  renderToolbar() {
-      const { isInputFocused } = this.state;
-    return (
-        <Toolbar
-        isFocused={isInputFocused}
-        onSubmit={this.handleSubmit}
-        onChangeFocus={this.handleChangeFocus}
-        onPressCamera={this.handlePressToolbarCamera}
-        onPressLocation={this.handlePressToolbarLocation}
-        />
-    );
-  }
 
   render() {
     return (

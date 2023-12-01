@@ -72,24 +72,27 @@ const styles = StyleSheet.create({
     },
     messageRow: {
         flexDirection: 'row',
-        justifyContent: 'flex-end', // Aligns messages to the right
-        //marginLeft: 60, // Leaves space on the left
+        justifyContent: 'flex-end',// Aligns messages to the right
+        marginLeft: 60, // Leaves space on the left
         marginRight: 5,
     },
     messageBubble: {
-        backgroundColor: '#007AFF', // Blue color for text message bubbles
+        backgroundColor: '#007AFF',
         borderRadius: 15,
-        padding: 10,
-        maxWidth: '80%', // Ensures bubble doesn't stretch beyond 80% of the screen width
-        alignSelf: 'flex-end', // Aligns the bubble to the right
+        paddingHorizontal: 10, // Horizontal padding
+        paddingVertical: 5, // Vertical padding, less than horizontal to reduce height for short messages
+        maxWidth: '80%',
+        alignSelf: 'flex-end',
         marginBottom: 5,
         marginTop: 5,
         marginRight: 10,
-    },
-    text: {
+        minWidth: 50, // Set a minimum width for very short messages
+      },
+      text: {
         color: 'white',
         fontSize: 16,
-    },
+        lineHeight: 20, // Ensures text is vertically centered
+      },
     image: {
         width: 200, 
         height: 150,
