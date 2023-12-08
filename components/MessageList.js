@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, FlatList, TouchableOpacity} from 'react-native';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 
 const keyExtractor = item => item.id.toString();
 
@@ -43,7 +43,14 @@ export default class MessageList extends React.Component {
                         latitudeDelta: 0.0922, // example delta values
                         longitudeDelta: 0.0421, // example delta values
                     }}
-                />
+                    >
+                    <Marker
+                        coordinate={{
+                        latitude: coordinate.latitude,
+                        longitude: coordinate.longitude,
+                        }}
+                    />
+                </MapView>
             );
         default:
             return null;

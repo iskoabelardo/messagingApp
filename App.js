@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, BackHandler, Image, TouchableHighlight, Keyboar
 import MessageList from './components/MessageList';
 import { createTextMessage, createImageMessage, createLocationMessage } from './utils/MessageUtils';
 import Toolbar from "./components/ToolBar";
+import * as Location from "expo-location";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -107,8 +108,31 @@ export default class App extends React.Component {
     // ...
   };
 
-  handlePressToolbarLocation = () => {
-    // ...
+  handlePressToolbarLocation = async () => {
+    try {
+      // Request Permission
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        // Handle permission denial here
+        console.error('Location permission not granted');
+        return;
+      }
+  
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      
+      this.setState({
+        messages: [
+          createLocationMessage({
+            latitude,
+            longitude,
+          }),
+          ...this.state.messages,
+        ],
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   handleChangeFocus = (isFocused) => {
